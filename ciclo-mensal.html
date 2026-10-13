@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LM Moda Feminina — Ciclo mensal</title>
+  <style>
+    :root {
+      --bg: #f7f2f0;
+      --surface: #ffffff;
+      --text: #1c1412;
+      --muted: #6b5b56;
+      --line: #e8ddd8;
+      --accent: #b83d5c;
+      --accent-soft: #f8e8ec;
+      --ok: #2f6f4e;
+      --radius: 14px;
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --display: Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #f3dce3 0%, transparent 55%),
+        radial-gradient(900px 400px at 100% 0%, #efe6e0 0%, transparent 50%),
+        var(--bg);
+      line-height: 1.45;
+      padding: 20px 16px 110px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    .brand {
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 4vw, 1.9rem);
+      margin: 0 0 6px;
+    }
+    .brand span { color: var(--accent); }
+    .sub { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .tool-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 18px; }
+    .tool-links a {
+      text-decoration: none;
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .tool-links a.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .card h2 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      margin: 0 0 10px;
+    }
+    .modes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .mode-btn {
+      border: 1px solid var(--line);
+      background: #fffcfb;
+      border-radius: 12px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: left;
+      font: inherit;
+    }
+    .mode-btn strong { display: block; margin-bottom: 4px; }
+    .mode-btn span { color: var(--muted); font-size: 0.82rem; }
+    .mode-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+    label.field {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    label.field input, label.field textarea {
+      display: block;
+      width: 100%;
+      margin-top: 4px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      font: inherit;
+      background: #fffcfb;
+      color: var(--text);
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 560px) {
+      .modes, .grid-2 { grid-template-columns: 1fr; }
+    }
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .progress-top span { color: var(--muted); font-size: 0.9rem; }
+    .bar {
+      height: 10px;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+    .saved { color: var(--muted); font-size: 0.8rem; min-height: 1.2em; margin: 0; }
+    .group-title {
+      margin: 16px 0 8px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    label.item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 11px 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: #fffcfb;
+      cursor: pointer;
+    }
+    label.item.checked { background: #f4faf6; border-color: #c7e0d1; }
+    label.item.checked .txt {
+      color: var(--muted);
+      text-decoration: line-through;
+      text-decoration-color: #c9b8b2;
+    }
+    label.item input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+    .txt { font-size: 0.95rem; }
+    .txt a { color: var(--accent); font-weight: 600; }
+    .hint {
+      background: var(--accent-soft);
+      color: #5c2a38;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+    .suggest {
+      border: 1px dashed #d4a0ad;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .suggest.show { display: block; }
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button.danger { color: #a33; }
+    button:hover { border-color: var(--accent); color: var(--accent); }
+    button.primary:hover { color: #fff; }
+    .fixed-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(247, 242, 240, 0.98), rgba(247, 242, 240, 0.92));
+      border-top: 1px solid var(--line);
+      z-index: 10;
+    }
+    .fixed-bar .inner {
+      max-width: 720px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+    }
+    .fixed-bar button { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 class="brand">LM <span>Moda Feminina</span> — Ciclo mensal</h1>
+      <p class="sub">Depois dos 30 dias: opere mês a mês. Escolha Manutenção ou Crescimento, marque o checklist, registre o resultado, exporte e recomece.</p>
+      <div class="tool-links">
+        <a class="primary" href="planilha-reels.html">Planilha de Reels</a>
+        <a href="plano-30-dias.html">Plano 30 dias</a>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>1. Configurar o mês</h2>
+      <div class="modes">
+        <button type="button" class="mode-btn" data-mode="manutencao" id="modeManutencao">
+          <strong>Manutenção</strong>
+          <span>Checklist menor. Manter ritmo e caixa.</span>
+        </button>
+        <button type="button" class="mode-btn" data-mode="crescimento" id="modeCrescimento">
+          <strong>Crescimento</strong>
+          <span>Boost, parceria e compra maior.</span>
+        </button>
+      </div>
+      <div class="grid-2">
+        <label class="field">Mês / ano
+          <input type="text" id="monthLabel" placeholder="Ex.: Novembro 2026" />
+        </label>
+        <label class="field">Meta de pedidos
+          <input type="number" id="goalOrders" min="1" step="1" />
+        </label>
+      </div>
+      <label class="field">Nota do mês (opcional)
+        <textarea id="monthNote" rows="2" placeholder="Ex.: focar vestido festa para Natal"></textarea>
+      </label>
+      <p class="hint" id="modeHint"></p>
+    </section>
+
+    <section class="card">
+      <div class="progress-top">
+        <strong>2. Checklist do mês</strong>
+        <span id="progressLabel">0 / 0</span>
+      </div>
+      <div class="bar"><i id="progressBar"></i></div>
+      <p class="saved" id="savedMsg"></p>
+      <div id="checklist"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. Resultado do mês</h2>
+      <div class="grid-2">
+        <label class="field">Pedidos fechados
+          <input type="number" id="resOrders" min="0" step="1" />
+        </label>
+        <label class="field">Ticket médio (R$)
+          <input type="number" id="resTicket" min="0" step="0.01" />
+        </label>
+        <label class="field">Lucro aprox. (R$)
+          <input type="number" id="resProfit" step="0.01" />
+        </label>
+        <label class="field">Top tipo 1
+          <input type="text" id="resTipo1" placeholder="Ex.: vestido festa" />
+        </label>
+        <label class="field">Top tipo 2
+          <input type="text" id="resTipo2" />
+        </label>
+        <label class="field">Top tipo 3
+          <input type="text" id="resTipo3" />
+        </label>
+      </div>
+      <div class="suggest" id="suggestBox"></div>
+      <div class="actions-row">
+        <button type="button" class="primary" id="btnEvaluate">Avaliar mês</button>
+        <button type="button" id="btnExport">Exportar JSON</button>
+        <button type="button" id="btnImport">Importar JSON</button>
+        <button type="button" class="danger" id="btnRestart">Recomeçar mês</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="fixed-bar">
+    <div class="inner">
+      <button type="button" id="btnExport2">Exportar</button>
+      <button type="button" class="primary" id="btnRestart2">Recomeçar</button>
+    </div>
+  </div>
+
+  <input type="file" id="fileImport" accept="application/json,.json" hidden />
+
+  <script>
+    const STORAGE_KEY = "lm-moda-ciclo-mensal-v1";
+
+    const ITEMS = {
+      manutencao: [
+        { id: "m-reels", group: "Conteúdo", text: "3 Reels de ocasião publicados na semana (e nas 4 semanas do mês)" },
+        { id: "m-planilha", group: "Conteúdo", text: 'Cada Reel lançado na <a href="planilha-reels.html">planilha</a>' },
+        { id: "m-sexta", group: "Operação", text: "Toda sexta: ranking dos tipos + margem do pedido" },
+        { id: "m-compra", group: "Estoque", text: "Compra só dos top tipos, com 2–3 unidades (sem diversificar à toa)" },
+        { id: "m-fluxo", group: "Venda", text: "WhatsApp → link do produto → frete no CEP → checkout" },
+        { id: "m-esgotado", group: "Venda", text: "Peça esgotada fora da vitrine/destaque/anúncio" },
+        { id: "m-boost", group: "Dinheiro", text: "Boost só se sobrar caixa e o Reel já tiver gerado “quero”/venda (senão pular)" }
+      ],
+      crescimento: [
+        { id: "c-reels", group: "Conteúdo", text: "3 Reels/semana de ocasião (festa/jantar/Q4 quando fizer sentido)" },
+        { id: "c-planilha", group: "Conteúdo", text: 'Planilha de Reels atualizada — ver <a href="planilha-reels.html">planilha</a>' },
+        { id: "c-stories", group: "Conteúdo", text: "Stories quase diários (enquete, embalando, prova social)" },
+        { id: "c-sexta", group: "Operação", text: "Toda sexta: ranking + ticket médio + margem" },
+        { id: "c-compra", group: "Estoque", text: "Compra dos top 3 tipos com profundidade (priorizar festa/elegante no Q4)" },
+        { id: "c-fluxo", group: "Venda", text: "Fluxo site ativo: link do produto + frete calculado" },
+        { id: "c-boost", group: "Crescimento", text: "Boost no Reel quente com estoque (ex.: R$ 100–300 no mês)" },
+        { id: "c-parceria", group: "Crescimento", text: "1 microcriadora / permuta com código mensurável" },
+        { id: "c-cupom", group: "Crescimento", text: "Cupom ativo com margem (NATAL10 / POSTEI) sem liquidar tudo" },
+        { id: "c-meta", group: "Crescimento", text: "Meta do mês acompanhada (pedidos ou ticket médio)" }
+      ]
+    };
+
+    function defaultMonthLabel() {
+      return new Date().toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
+        .replace(/^./, (c) => c.toUpperCase());
+    }
+
+    function defaultState() {
+      return {
+        mode: "manutencao",
+        monthLabel: defaultMonthLabel(),
+        goalOrders: 10,
+        monthNote: "",
+        checks: {},
+        results: {
+          orders: "",
+          ticket: "",
+          profit: "",
+          tipo1: "",
+          tipo2: "",
+          tipo3: ""
+        }
+      };
+    }
+
+    function load() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!raw) return defaultState();
+        return Object.assign(defaultState(), raw, {
+          checks: raw.checks || {},
+          results: Object.assign(defaultState().results, raw.results || {})
+        });
+      } catch {
+        return defaultState();
+      }
+    }
+
+    let state = load();
+
+    const els = {
+      modeManutencao: document.getElementById("modeManutencao"),
+      modeCrescimento: document.getElementById("modeCrescimento"),
+      monthLabel: document.getElementById("monthLabel"),
+      goalOrders: document.getElementById("goalOrders"),
+      monthNote: document.getElementById("monthNote"),
+      modeHint: document.getElementById("modeHint"),
+      checklist: document.getElementById("checklist"),
+      progressBar: document.getElementById("progressBar"),
+      progressLabel: document.getElementById("progressLabel"),
+      savedMsg: document.getElementById("savedMsg"),
+      resOrders: document.getElementById("resOrders"),
+      resTicket: document.getElementById("resTicket"),
+      resProfit: document.getElementById("resProfit"),
+      resTipo1: document.getElementById("resTipo1"),
+      resTipo2: document.getElementById("resTipo2"),
+      resTipo3: document.getElementById("resTipo3"),
+      suggestBox: document.getElementById("suggestBox")
+    };
+
+    function persist() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const now = new Date();
+      els.savedMsg.textContent = "Salvo às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function modeHintText() {
+      if (state.mode === "crescimento") {
+        return "Modo Crescimento: mais ações (boost, parceria, cupom). Use se o mês anterior já deu pedido e margem.";
+      }
+      return "Modo Manutenção: checklist enxuto. Ideal se o caixa está justo ou os 30 dias ainda estão frescos.";
+    }
+
+    function currentItems() {
+      return ITEMS[state.mode] || ITEMS.manutencao;
+    }
+
+    function updateProgress() {
+      const items = currentItems();
+      const done = items.filter((i) => state.checks[i.id]).length;
+      const pct = items.length ? Math.round((done / items.length) * 100) : 0;
+      els.progressBar.style.width = pct + "%";
+      els.progressLabel.textContent = done + " / " + items.length + " (" + pct + "%)";
+    }
+
+    function renderModes() {
+      els.modeManutencao.classList.toggle("active", state.mode === "manutencao");
+      els.modeCrescimento.classList.toggle("active", state.mode === "crescimento");
+      els.modeHint.textContent = modeHintText();
+      els.goalOrders.placeholder = state.mode === "crescimento" ? "Ex.: 18" : "Ex.: 10";
+    }
+
+    function renderChecklist() {
+      const items = currentItems();
+      const groups = {};
+      items.forEach((i) => {
+        if (!groups[i.group]) groups[i.group] = [];
+        groups[i.group].push(i);
+      });
+      els.checklist.innerHTML = Object.keys(groups).map((g) => {
+        const list = groups[g].map((i) => {
+          const checked = !!state.checks[i.id];
+          return (
+            '<label class="item' + (checked ? " checked" : "") + '" for="' + i.id + '">' +
+              '<input type="checkbox" id="' + i.id + '" data-id="' + i.id + '"' + (checked ? " checked" : "") + " />" +
+              '<span class="txt">' + i.text + "</span></label>"
+          );
+        }).join("");
+        return '<p class="group-title">' + g + "</p>" + list;
+      }).join("");
+
+      els.checklist.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+        input.addEventListener("change", () => {
+          state.checks[input.getAttribute("data-id")] = input.checked;
+          input.closest("label").classList.toggle("checked", input.checked);
+          persist();
+          updateProgress();
+        });
+      });
+      updateProgress();
+    }
+
+    function syncFormFromState() {
+      els.monthLabel.value = state.monthLabel || "";
+      els.goalOrders.value = state.goalOrders || "";
+      els.monthNote.value = state.monthNote || "";
+      els.resOrders.value = state.results.orders;
+      els.resTicket.value = state.results.ticket;
+      els.resProfit.value = state.results.profit;
+      els.resTipo1.value = state.results.tipo1;
+      els.resTipo2.value = state.results.tipo2;
+      els.resTipo3.value = state.results.tipo3;
+    }
+
+    function readResults() {
+      state.results = {
+        orders: els.resOrders.value,
+        ticket: els.resTicket.value,
+        profit: els.resProfit.value,
+        tipo1: els.resTipo1.value,
+        tipo2: els.resTipo2.value,
+        tipo3: els.resTipo3.value
+      };
+    }
+
+    function evaluateMonth() {
+      readResults();
+      const orders = parseInt(state.results.orders, 10);
+      const goal = parseInt(state.goalOrders, 10) || 0;
+      const profit = parseFloat(String(state.results.profit).replace(",", "."));
+      let html = "";
+
+      if (!Number.isFinite(orders)) {
+        html = "Preencha os <strong>pedidos fechados</strong> para avaliar o mês.";
+      } else if (goal && orders >= goal && (!Number.isFinite(profit) || profit >= 0)) {
+        html = "Meta batida (" + orders + " ≥ " + goal + "). Sugestão para o próximo ciclo: <strong>Crescimento</strong>." +
+          ' <button type="button" class="primary" id="btnApplyGrowth" style="margin-top:8px">Aplicar Crescimento e recomeçar</button>';
+      } else {
+        html = "Meta não batida ou resultado apertado. Sugestão: <strong>Manutenção</strong> no próximo mês (ritmo + top tipos)." +
+          ' <button type="button" class="primary" id="btnApplyMaint" style="margin-top:8px">Aplicar Manutenção e recomeçar</button>';
+      }
+
+      const tipos = [state.results.tipo1, state.results.tipo2, state.results.tipo3].filter(Boolean);
+      if (tipos.length) {
+        html += "<br><br>Levar para a próxima compra: <strong>" + tipos.map(escapeHtml).join("</strong>, <strong>") + "</strong>.";
+      }
+
+      els.suggestBox.innerHTML = html;
+      els.suggestBox.classList.add("show");
+      persist();
+
+      const g = document.getElementById("btnApplyGrowth");
+      const m = document.getElementById("btnApplyMaint");
+      if (g) g.addEventListener("click", () => restartMonth("crescimento", true));
+      if (m) m.addEventListener("click", () => restartMonth("manutencao", true));
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function restartMonth(nextMode, fromSuggest) {
+      const msg = fromSuggest
+        ? "Exportou o backup deste mês? Vamos zerar o checklist e abrir o próximo ciclo."
+        : "Recomeçar o mês? Isso zera o checklist e os resultados. Exporte o JSON antes se quiser guardar.";
+      if (!confirm(msg)) return;
+
+      const keepMode = nextMode || state.mode;
+      const nextGoal = keepMode === "crescimento"
+        ? Math.max(parseInt(state.goalOrders, 10) || 15, 15)
+        : Math.min(parseInt(state.goalOrders, 10) || 10, 12);
+
+      state = defaultState();
+      state.mode = keepMode;
+      state.goalOrders = nextGoal;
+      state.monthLabel = defaultMonthLabel();
+      els.suggestBox.classList.remove("show");
+      els.suggestBox.innerHTML = "";
+      persist();
+      renderAll();
+      els.savedMsg.textContent = "Novo ciclo iniciado (" + keepMode + ")";
+    }
+
+    function exportJson() {
+      readResults();
+      state.monthLabel = els.monthLabel.value;
+      state.goalOrders = parseInt(els.goalOrders.value, 10) || state.goalOrders;
+      state.monthNote = els.monthNote.value;
+      const blob = new Blob([JSON.stringify({
+        v: 1,
+        kind: "lm-moda-ciclo-mensal",
+        savedAt: new Date().toISOString(),
+        state
+      }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      const stamp = (state.monthLabel || "mes").replace(/\s+/g, "-").toLowerCase();
+      a.href = URL.createObjectURL(blob);
+      a.download = "lm-moda-ciclo-" + stamp + ".json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      els.savedMsg.textContent = "Backup do mês baixado";
+      persist();
+    }
+
+    function renderAll() {
+      renderModes();
+      syncFormFromState();
+      renderChecklist();
+    }
+
+    els.modeManutencao.addEventListener("click", () => {
+      if (state.mode === "manutencao") return;
+      state.mode = "manutencao";
+      if (!els.goalOrders.value) state.goalOrders = 10;
+      persist();
+      renderAll();
+    });
+    els.modeCrescimento.addEventListener("click", () => {
+      if (state.mode === "crescimento") return;
+      state.mode = "crescimento";
+      if ((parseInt(state.goalOrders, 10) || 0) < 15) state.goalOrders = 15;
+      persist();
+      renderAll();
+    });
+
+    ["monthLabel", "goalOrders", "monthNote"].forEach((id) => {
+      els[id].addEventListener("input", () => {
+        state.monthLabel = els.monthLabel.value;
+        state.goalOrders = parseInt(els.goalOrders.value, 10) || 0;
+        state.monthNote = els.monthNote.value;
+        persist();
+      });
+    });
+
+    ["resOrders", "resTicket", "resProfit", "resTipo1", "resTipo2", "resTipo3"].forEach((id) => {
+      els[id].addEventListener("input", () => {
+        readResults();
+        persist();
+      });
+    });
+
+    document.getElementById("btnEvaluate").addEventListener("click", evaluateMonth);
+    document.getElementById("btnExport").addEventListener("click", exportJson);
+    document.getElementById("btnExport2").addEventListener("click", exportJson);
+    document.getElementById("btnRestart").addEventListener("click", () => restartMonth(null, false));
+    document.getElementById("btnRestart2").addEventListener("click", () => restartMonth(null, false));
+
+    document.getElementById("btnImport").addEventListener("click", () => document.getElementById("fileImport").click());
+    document.getElementById("fileImport").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          const incoming = data.state || data;
+          state = Object.assign(defaultState(), incoming, {
+            checks: incoming.checks || {},
+            results: Object.assign(defaultState().results, incoming.results || {})
+          });
+          persist();
+          renderAll();
+          els.suggestBox.classList.remove("show");
+          els.savedMsg.textContent = "Ciclo importado";
+        } catch {
+          alert("Arquivo inválido.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    renderAll();
+    if (localStorage.getItem(STORAGE_KEY)) {
+      els.savedMsg.textContent = "Ciclo restaurado deste aparelho";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LM Moda Feminina — Plano 30 dias</title>
+  <style>
+    :root {
+      --bg: #f7f2f0;
+      --surface: #ffffff;
+      --text: #1c1412;
+      --muted: #6b5b56;
+      --line: #e8ddd8;
+      --accent: #b83d5c;
+      --accent-soft: #f8e8ec;
+      --ok: #2f6f4e;
+      --radius: 14px;
+      --shadow: 0 1px 0 rgba(28, 20, 18, 0.04);
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --display: Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #f3dce3 0%, transparent 55%),
+        radial-gradient(900px 400px at 100% 0%, #efe6e0 0%, transparent 50%),
+        var(--bg);
+      line-height: 1.45;
+      padding: 20px 16px 96px;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    header { margin-bottom: 16px; }
+    .brand {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 4vw, 2rem);
+      margin: 0 0 6px;
+    }
+    .brand span { color: var(--accent); }
+    .sub { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .tool-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .tool-links a {
+      text-decoration: none;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .tool-links a.secondary {
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .progress-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin: 18px 0 22px;
+      position: sticky;
+      top: 10px;
+      z-index: 5;
+    }
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .progress-top span { color: var(--muted); font-size: 0.9rem; }
+    .bar {
+      height: 10px;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar > i {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--accent);
+      border-radius: inherit;
+      transition: width 0.25s ease;
+    }
+    .nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      margin-bottom: 18px;
+    }
+    .nav a {
+      flex: 0 0 auto;
+      text-decoration: none;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .nav a:hover { border-color: var(--accent); color: var(--accent); }
+    details.week {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    details.week[open] { border-color: #dcc7c2; }
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    .week-title {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      margin: 0 0 4px;
+    }
+    .week-meta { margin: 0; color: var(--muted); font-size: 0.88rem; }
+    .badge {
+      flex: 0 0 auto;
+      font-size: 0.78rem;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 600;
+    }
+    .badge.done { background: #e5f3ea; color: var(--ok); }
+    .body { padding: 0 16px 16px; }
+    .group { margin-top: 8px; }
+    .group h3 {
+      margin: 14px 0 8px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    label.item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 11px 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      background: #fffcfb;
+      cursor: pointer;
+    }
+    label.item:hover { border-color: #d8c2bc; }
+    label.item.checked { background: #f4faf6; border-color: #c7e0d1; }
+    label.item.checked .txt {
+      color: var(--muted);
+      text-decoration: line-through;
+      text-decoration-color: #c9b8b2;
+    }
+    label.item input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+    .txt { font-size: 0.95rem; }
+    .txt b { font-weight: 700; color: var(--text); }
+    .txt a { color: var(--accent); font-weight: 600; }
+    label.item.checked .txt b { color: var(--muted); }
+    .note {
+      margin: 10px 0 0;
+      padding: 12px;
+      background: var(--accent-soft);
+      border-radius: 12px;
+      color: #5c2a38;
+      font-size: 0.9rem;
+    }
+    .rules {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .rules h2 {
+      font-family: var(--display);
+      font-size: 1.15rem;
+      margin: 0 0 10px;
+    }
+    .rules ul {
+      margin: 0;
+      padding-left: 1.1rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .rules li { margin-bottom: 6px; }
+    .actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(247, 242, 240, 0.98), rgba(247, 242, 240, 0.92));
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: center;
+      z-index: 10;
+    }
+    .actions .inner {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      flex: 1;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); color: var(--accent); }
+    button.danger:hover { border-color: #a33; color: #a33; }
+    .saved {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-top: 8px;
+      min-height: 1.2em;
+    }
+    @media (min-width: 640px) {
+      body { padding: 32px 24px 100px; }
+      label.item { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 class="brand">LM <span>Moda Feminina</span> — Plano 30 dias</h1>
+      <p class="sub">Checklist interativo. Progresso salvo neste aparelho. Use a planilha para anotar cada Reel.</p>
+      <div class="tool-links">
+        <a href="planilha-reels.html">Abrir planilha de Reels</a>
+        <a class="secondary" href="ciclo-mensal.html">Ciclo mensal (pós 30 dias)</a>
+        <a class="secondary" href="#q4">Ver Q4 / Natal</a>
+      </div>
+    </header>
+
+    <div class="progress-card">
+      <div class="progress-top">
+        <strong>Progresso geral</strong>
+        <span id="progressLabel">0 / 0</span>
+      </div>
+      <div class="bar"><i id="progressBar"></i></div>
+      <p class="saved" id="savedMsg"></p>
+    </div>
+
+    <nav class="nav" aria-label="Seções">
+      <a href="#norte">Norte</a>
+      <a href="#q4">Q4 / Natal</a>
+      <a href="#semana-1">Semana 1</a>
+      <a href="#semana-2">Semana 2</a>
+      <a href="#semana-3">Semana 3</a>
+      <a href="#semana-4">Semana 4</a>
+      <a href="#sexta">Toda sexta</a>
+    </nav>
+
+    <section class="rules" id="norte">
+      <h2>Norte</h2>
+      <ul>
+        <li>Orçamento R$ 800 (ou R$ 500 enxuto). Meta: 8–15 pedidos; 2+ pelo site.</li>
+        <li>Estoque atual = peça única (liquidar). R$ 500 = compra nova dos 3 tipos, com 2–3 unidades.</li>
+        <li>Frete calculado no CEP. Fluxo: WhatsApp → link do produto → checkout.</li>
+        <li>Bio: loja + WhatsApp. Mínimo 3 Reels/semana de ocasião.</li>
+        <li>Q4: em empate de tipos, priorizar festa / jantar / elegante.</li>
+      </ul>
+    </section>
+
+    <section class="rules" id="q4">
+      <h2>Q4 e Natal</h2>
+      <ul>
+        <li>Outubro: loja + compra com viés festa/jantar.</li>
+        <li>Novembro: 2ª compra festa; cupom NATAL10; Black Friday só 1–2 SKUs com margem.</li>
+        <li>Até ~10–12 dez: corte de envio Brasil; depois priorizar CE / retirada.</li>
+        <li>Não comprar 20 modelos sem profundidade nem prometer entrega nacional em cima da hora.</li>
+      </ul>
+    </section>
+
+    <div id="app"></div>
+  </div>
+
+  <div class="actions">
+    <div class="inner">
+      <button type="button" id="btnExport">Exportar backup</button>
+      <button type="button" id="btnImport">Importar</button>
+      <button type="button" class="danger" id="btnReset">Zerar</button>
+    </div>
+  </div>
+  <input type="file" id="fileImport" accept="application/json,.json" hidden />
+
+  <script>
+    const STORAGE_KEY = "lm-moda-plano-30-checklist-v1";
+
+    const DATA = [
+      {
+        id: "semana-1",
+        title: "Semana 1 — Vender o que tem + descobrir tipos",
+        meta: "Meta: 2–4 vendas; 3 tipos ranqueados; compra nova feita.",
+        open: true,
+        groups: [
+          {
+            name: "Base",
+            items: [
+              ["s1-cat", "Categoria: Marca de roupas / Boutique"],
+              ["s1-bio", "Bio: LM | Moda feminina · caimento real · Horizonte-CE · WhatsApp"],
+              ["s1-link", "Link da bio = WhatsApp (loja ainda não existe)"],
+              ["s1-disp", "Destaque Disponíveis só com tamanho + preço"],
+              ["s1-fundo", "Fundo neutro montado (sem cortina vermelha)"],
+              ["s1-planilha", 'Registrar cada Reel na <a href="planilha-reels.html">planilha de Reels</a> (data | peça | tipo | quero | saves | shares | vendeu?)'],
+              ["s1-rank", "Sexta: rankear 3 tipos (quero → saves → shares → venda); em empate, subir festa/jantar/elegante"],
+              ["s1-compra", "Sáb/seg: comprar ~R$ 150–180/tipo com 2–3 unidades cada (viés Q4 na escolha)"],
+              ["s1-foto", "Fotografar a compra nova"]
+            ]
+          },
+          {
+            name: "Reels (1 peça / tipo diferente em cada)",
+            items: [
+              ["s1-r1", "<b>Reel 1 (Seg):</b> Look para sair com o boy — vestido ou conjunto atual; “última peça” se for única; comenta QUERO"],
+              ["s1-r2", "<b>Reel 2 (Qua):</b> Vestido que disfarça a barriga — caimento frente/lado; preço na tela; comenta QUERO"],
+              ["s1-r3", "<b>Reel 3 (Sex):</b> Look para jantar romântico / fim de ano — peça mais elegante; envio hoje / WhatsApp"]
+            ]
+          }
+        ]
+      },
+      {
+        id: "semana-2",
+        title: "Semana 2 — Abrir a loja e o fluxo certo",
+        meta: "Meta: loja no ar; 1ª venda pelo site ou 3+ cliques qualificados.",
+        groups: [
+          {
+            name: "Loja",
+            items: [
+              ["s2-conta", "Conta Começo + Nuvem Pago + Nuvem Envio"],
+              ["s2-dom", "Domínio próprio"],
+              ["s2-prod", "6–8 produtos (compra nova + resto atual)"],
+              ["s2-pdp", "Em cada PDP: medidas, caimento, peso, fotos no corpo, troca por tamanho"],
+              ["s2-frete", "Frete calculado ativo (peso/medidas corretos)"],
+              ["s2-prazo", "Texto de prazo: “após o pagamento, postagem em X dias úteis”"],
+              ["s2-pix", "Pix em destaque; até 3x sem juros"],
+              ["s2-esg", "Esgotado sai da vitrine no mesmo dia"]
+            ]
+          },
+          {
+            name: "Instagram",
+            items: [
+              ["s2-bio", "Bio: link da loja + botão/atalho WhatsApp"],
+              ["s2-como", "Destaque Como comprar: abre produto → CEP → paga"],
+              ["s2-zap", "No WhatsApp: mandar link do produto, não só foto"]
+            ]
+          },
+          {
+            name: "Reels (priorizar compra nova)",
+            items: [
+              ["s2-r1", "<b>Reel 1 (Seg):</b> Loja no ar — escolhe tamanho, calcula frete e paga + look rápido; link na bio"],
+              ["s2-r2", "<b>Reel 2 (Qua):</b> Look para confraternização / fim de ano — peça nova elegante; link do produto"],
+              ["s2-r3", "<b>Reel 3 (Sex):</b> Look trabalho que vira happy hour — mesma peça de dia e de noite"]
+            ]
+          }
+        ],
+        note: "Script WhatsApp: “Essa peça tá aqui: [link]. Escolhe o tamanho, coloca o CEP e finaliza. Qualquer dúvida me chama.”"
+      },
+      {
+        id: "semana-3",
+        title: "Semana 3 — Visibilidade + tráfego",
+        meta: "Meta: 3–5 pedidos; boost R$ 100 → pelo menos R$ 200 em vendas.",
+        groups: [
+          {
+            name: "Base",
+            items: [
+              ["s3-stories", "Stories quase diários (enquete, embalando, prova social)"],
+              ["s3-boost", "Boost R$ 20/dia × 5 dias no Reel quente da compra nova → página do produto"],
+              ["s3-pause", "Pausar anúncio se zerar estoque"],
+              ["s3-micro", "1 microcriadora local (3k–15k): 1 Reel + 3 Stories + cupom LM10 ou NATAL10"],
+              ["s3-natal10", "Criar cupom NATAL10 (10%) na Nuvemshop, pedido mínimo acima do frete"],
+              ["s3-unica", "Peça única restante: só orgânico com urgência"]
+            ]
+          },
+          {
+            name: "Reels (só peça com estoque)",
+            items: [
+              ["s3-r1", "<b>Reel 1 (Seg):</b> Look para jantar de fim de ano — peça da compra nova; link do produto"],
+              ["s3-r2", "<b>Reel 2 (Qua):</b> Look para sair com o boy — linha que mais pediu; bom candidato a boost"],
+              ["s3-r3", "<b>Reel 3 (Sex):</b> Vestido que afina a silhueta / serve de festa — caimento + medida; comenta QUERO"]
+            ]
+          }
+        ]
+      },
+      {
+        id: "semana-4",
+        title: "Semana 4 — Ajustar e travar novembro (Q4)",
+        meta: "Meta: fechar 8–15 pedidos; lista de compra de novembro (festa/Natal) pronta.",
+        groups: [
+          {
+            name: "Base",
+            items: [
+              ["s4-nums", "Contar: pedidos WhatsApp vs site, ticket, margem real"],
+              ["s4-boost", "Boost com retorno &lt; 1,5x → pausar"],
+              ["s4-vitrine", "Limpar vitrine / criar Vistos no Reels (só disponível)"],
+              ["s4-ugc", "Cupom POSTEI 10% (marcar o perfil vestindo; pedido mínimo acima do frete)"],
+              ["s4-plano", "Continuar no Começo (Essencial só se faturar ~R$ 3.000+ e faltar recurso)"],
+              ["s4-tipos", "Listar 3 tipos para novembro com profundidade — pelo menos 2 de festa/jantar/elegante"],
+              ["s4-corte", "Definir data-corte de envio Brasil para o Natal + texto para Stories/bio"],
+              ["s4-bf", "Black Friday: no máximo 1–2 SKUs com desconto e margem; resto preço cheio"]
+            ]
+          },
+          {
+            name: "Reels",
+            items: [
+              ["s4-r1", "<b>Reel 1 (Seg):</b> Look para jantar romântico / ceia — melhor margem; link do produto"],
+              ["s4-r2", "<b>Reel 2 (Qua):</b> “Não tenho nada pra vestir na confraternização” — GRWM coringa; link na bio"],
+              ["s4-r3", "<b>Reel 3 (Sex):</b> Look Réveillon / festa — ocasião de dezembro + prova social se tiver"]
+            ]
+          }
+        ]
+      },
+      {
+        id: "sexta",
+        title: "Checklist semanal (toda sexta)",
+        meta: "Revisão rápida antes de começar a próxima semana.",
+        groups: [
+          {
+            name: "Revisão",
+            items: [
+              ["w-quero", "Quantos “quero” / directs?"],
+              ["w-pedidos", "Quantos pedidos e ticket médio?"],
+              ["w-margem", "Margem = preço − custo − embalagem − taxa − frete que você pagou"],
+              ["w-cliques", "Cliques no link da bio (após semana 2)"],
+              ["w-reels", "Reel 1, 2 e 3 da semana publicados e lançados na planilha?"],
+              ["w-esgotado", "Alguma peça esgotada ainda no destaque/anúncio? Remover."],
+              ["w-q4", "Conteúdo/estoque ainda fazem sentido para o Q4 (festa → Natal → Réveillon)?"]
+            ]
+          }
+        ]
+      }
+    ];
+
+    const app = document.getElementById("app");
+    const progressBar = document.getElementById("progressBar");
+    const progressLabel = document.getElementById("progressLabel");
+    const savedMsg = document.getElementById("savedMsg");
+
+    function loadState() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch { return {}; }
+    }
+
+    function saveState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const now = new Date();
+      savedMsg.textContent = "Salvo às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    let state = loadState();
+
+    function allIds() {
+      const ids = [];
+      DATA.forEach((week) => week.groups.forEach((g) => g.items.forEach(([id]) => ids.push(id))));
+      return ids;
+    }
+
+    function updateProgress() {
+      const ids = allIds();
+      const done = ids.filter((id) => state[id]).length;
+      const pct = ids.length ? Math.round((done / ids.length) * 100) : 0;
+      progressBar.style.width = pct + "%";
+      progressLabel.textContent = done + " / " + ids.length + " (" + pct + "%)";
+      DATA.forEach((week) => {
+        const weekIds = [];
+        week.groups.forEach((g) => g.items.forEach(([id]) => weekIds.push(id)));
+        const wDone = weekIds.filter((id) => state[id]).length;
+        const badge = document.querySelector('[data-badge="' + week.id + '"]');
+        if (badge) {
+          badge.textContent = wDone + "/" + weekIds.length;
+          badge.classList.toggle("done", wDone === weekIds.length && weekIds.length > 0);
+        }
+      });
+    }
+
+    function render() {
+      app.innerHTML = DATA.map((week) => {
+        const groups = week.groups.map((g) => {
+          const items = g.items.map(([id, html]) => {
+            const checked = !!state[id];
+            return (
+              '<label class="item' + (checked ? " checked" : "") + '" for="' + id + '">' +
+                '<input type="checkbox" id="' + id + '" data-id="' + id + '"' + (checked ? " checked" : "") + " />" +
+                '<span class="txt">' + html + "</span></label>"
+            );
+          }).join("");
+          return '<div class="group"><h3>' + g.name + "</h3>" + items + "</div>";
+        }).join("");
+        const note = week.note ? '<p class="note">' + week.note + "</p>" : "";
+        return (
+          '<details class="week" id="' + week.id + '"' + (week.open ? " open" : "") + ">" +
+            "<summary><div><p class=\"week-title\">" + week.title + "</p>" +
+            '<p class="week-meta">' + week.meta + "</p></div>" +
+            '<span class="badge" data-badge="' + week.id + '">0/0</span></summary>' +
+            '<div class="body">' + groups + note + "</div></details>"
+        );
+      }).join("");
+
+      app.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+        input.addEventListener("change", () => {
+          const id = input.getAttribute("data-id");
+          state[id] = input.checked;
+          input.closest("label").classList.toggle("checked", input.checked);
+          saveState(state);
+          updateProgress();
+        });
+      });
+      updateProgress();
+      if (Object.keys(state).length) savedMsg.textContent = "Progresso restaurado deste aparelho";
+    }
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      if (!confirm("Zerar todo o checklist deste aparelho?")) return;
+      state = {};
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+      savedMsg.textContent = "Checklist zerado";
+    });
+
+    document.getElementById("btnExport").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify({ v: 1, savedAt: new Date().toISOString(), state }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "lm-moda-checklist-backup.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      savedMsg.textContent = "Backup baixado";
+    });
+
+    document.getElementById("btnImport").addEventListener("click", () => document.getElementById("fileImport").click());
+    document.getElementById("fileImport").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          state = data.state || data;
+          saveState(state);
+          render();
+          savedMsg.textContent = "Backup importado";
+        } catch { alert("Arquivo inválido."); }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    render();
+  </script>
+</body>
+</html>

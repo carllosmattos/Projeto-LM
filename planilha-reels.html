@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LM Moda Feminina — Planilha de Reels</title>
+  <style>
+    :root {
+      --bg: #f7f2f0;
+      --surface: #ffffff;
+      --text: #1c1412;
+      --muted: #6b5b56;
+      --line: #e8ddd8;
+      --accent: #b83d5c;
+      --accent-soft: #f8e8ec;
+      --ok: #2f6f4e;
+      --danger: #a33;
+      --radius: 14px;
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --display: Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 500px at 10% -10%, #f3dce3 0%, transparent 55%),
+        radial-gradient(900px 400px at 100% 0%, #efe6e0 0%, transparent 50%),
+        var(--bg);
+      line-height: 1.45;
+      padding: 20px 16px 110px;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; }
+    .brand {
+      font-family: var(--display);
+      font-size: clamp(1.5rem, 4vw, 1.9rem);
+      margin: 0 0 6px;
+    }
+    .brand span { color: var(--accent); }
+    .sub { margin: 0 0 14px; color: var(--muted); font-size: 0.95rem; }
+    .tool-links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .tool-links a {
+      text-decoration: none;
+      background: var(--surface);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .card h2 {
+      font-family: var(--display);
+      font-size: 1.1rem;
+      margin: 0 0 10px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    button, .file-btn {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    button:hover, .file-btn:hover { border-color: var(--accent); color: var(--accent); }
+    button.primary:hover { color: #fff; filter: brightness(1.05); }
+    button.danger { color: var(--danger); }
+    .saved { color: var(--muted); font-size: 0.8rem; min-height: 1.2em; margin: 0 0 10px; }
+
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+    th {
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    td {
+      padding: 6px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: middle;
+    }
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      font: inherit;
+      background: #fffcfb;
+      color: var(--text);
+    }
+    input:focus, select:focus {
+      outline: 2px solid #f0c4d0;
+      border-color: var(--accent);
+    }
+    input.num { max-width: 72px; }
+    .row-actions { display: flex; gap: 4px; }
+    .row-actions button {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 12px;
+      font-size: 0.95rem;
+    }
+    .rank-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .rank-list li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 0.95rem;
+    }
+    .rank-list li:last-child { border-bottom: 0; }
+    .rank-list .meta { color: var(--muted); font-size: 0.85rem; }
+    .rank-list .place {
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 1.5em;
+    }
+    .fixed-bar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      background: linear-gradient(to top, rgba(247, 242, 240, 0.98), rgba(247, 242, 240, 0.92));
+      border-top: 1px solid var(--line);
+      z-index: 10;
+    }
+    .fixed-bar .inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .fixed-bar button { flex: 1; min-width: 110px; }
+    @media (min-width: 720px) {
+      body { padding: 32px 24px 110px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 class="brand">LM <span>Moda Feminina</span> — Planilha de Reels</h1>
+      <p class="sub">Anote cada Reel. Salva sozinho neste navegador. Use o ranking na sexta para escolher os 3 tipos.</p>
+      <div class="tool-links">
+        <a href="plano-30-dias.html">Plano 30 dias</a>
+        <a href="ciclo-mensal.html">Ciclo mensal</a>
+      </div>
+    </header>
+
+    <p class="saved" id="savedMsg"></p>
+
+    <div class="card">
+      <div class="toolbar">
+        <button type="button" class="primary" id="btnAdd">+ Nova linha</button>
+        <button type="button" id="btnExportJson">Exportar JSON</button>
+        <button type="button" id="btnExportCsv">Exportar CSV</button>
+        <button type="button" id="btnImport">Importar JSON</button>
+        <button type="button" class="danger" id="btnReset">Zerar</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Peça</th>
+              <th>Tipo</th>
+              <th>Quero</th>
+              <th>Saves</th>
+              <th>Shares</th>
+              <th>Vendeu?</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <div class="empty" id="emptyState" hidden>Nenhum Reel ainda. Toque em “Nova linha” depois de postar.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Top 3 tipos (ranking)</h2>
+      <p class="sub" style="margin-top:0">Ordem: quero → saves → shares → vendas. Em empate no plano, suba festa/jantar/elegante.</p>
+      <ol class="rank-list" id="rankList"></ol>
+    </div>
+  </div>
+
+  <div class="fixed-bar">
+    <div class="inner">
+      <button type="button" class="primary" id="btnAdd2">+ Nova linha</button>
+      <button type="button" id="btnExportJson2">Exportar JSON</button>
+      <button type="button" id="btnExportCsv2">Exportar CSV</button>
+    </div>
+  </div>
+
+  <input type="file" id="fileImport" accept="application/json,.json" hidden />
+
+  <script>
+    const STORAGE_KEY = "lm-moda-planilha-reels-v1";
+
+    function uid() {
+      return "r_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+    }
+
+    function emptyRow() {
+      const today = new Date().toISOString().slice(0, 10);
+      return {
+        id: uid(),
+        data: today,
+        peca: "",
+        tipo: "",
+        quero: 0,
+        saves: 0,
+        shares: 0,
+        vendeu: "nao"
+      };
+    }
+
+    function loadRows() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+        return Array.isArray(raw) ? raw : [];
+      } catch {
+        return [];
+      }
+    }
+
+    let rows = loadRows();
+    const tbody = document.getElementById("tbody");
+    const emptyState = document.getElementById("emptyState");
+    const savedMsg = document.getElementById("savedMsg");
+    const rankList = document.getElementById("rankList");
+
+    function persist() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
+      const now = new Date();
+      savedMsg.textContent = "Salvo às " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    }
+
+    function num(v) {
+      const n = parseInt(v, 10);
+      return Number.isFinite(n) && n >= 0 ? n : 0;
+    }
+
+    function updateRanking() {
+      const map = {};
+      rows.forEach((r) => {
+        const tipo = (r.tipo || "").trim().toLowerCase();
+        if (!tipo) return;
+        if (!map[tipo]) {
+          map[tipo] = { tipo: r.tipo.trim(), quero: 0, saves: 0, shares: 0, vendas: 0, n: 0 };
+        }
+        map[tipo].quero += num(r.quero);
+        map[tipo].saves += num(r.saves);
+        map[tipo].shares += num(r.shares);
+        map[tipo].vendas += r.vendeu === "sim" ? 1 : 0;
+        map[tipo].n += 1;
+      });
+
+      const ranked = Object.values(map).sort((a, b) => {
+        if (b.quero !== a.quero) return b.quero - a.quero;
+        if (b.saves !== a.saves) return b.saves - a.saves;
+        if (b.shares !== a.shares) return b.shares - a.shares;
+        return b.vendas - a.vendas;
+      }).slice(0, 3);
+
+      if (!ranked.length) {
+        rankList.innerHTML = '<li><span class="meta">Preencha a coluna Tipo nos Reels para ver o ranking.</span></li>';
+        return;
+      }
+
+      rankList.innerHTML = ranked.map((r, i) => (
+        "<li>" +
+          "<div><span class=\"place\">" + (i + 1) + ".</span> <strong>" + escapeHtml(r.tipo) + "</strong>" +
+          "<div class=\"meta\">" + r.n + " reel(s)</div></div>" +
+          "<div class=\"meta\">quero " + r.quero + " · saves " + r.saves + " · shares " + r.shares + " · vendas " + r.vendas + "</div>" +
+        "</li>"
+      )).join("");
+    }
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function render() {
+      emptyState.hidden = rows.length > 0;
+      tbody.innerHTML = rows.map((r) => (
+        '<tr data-id="' + r.id + '">' +
+          '<td><input type="date" data-field="data" value="' + escapeHtml(r.data || "") + '" /></td>' +
+          '<td><input type="text" data-field="peca" placeholder="Ex.: vestido amarelo" value="' + escapeHtml(r.peca || "") + '" /></td>' +
+          '<td><input type="text" data-field="tipo" placeholder="Ex.: vestido curto festa" value="' + escapeHtml(r.tipo || "") + '" /></td>' +
+          '<td><input class="num" type="number" min="0" data-field="quero" value="' + num(r.quero) + '" /></td>' +
+          '<td><input class="num" type="number" min="0" data-field="saves" value="' + num(r.saves) + '" /></td>' +
+          '<td><input class="num" type="number" min="0" data-field="shares" value="' + num(r.shares) + '" /></td>' +
+          '<td><select data-field="vendeu">' +
+            '<option value="nao"' + (r.vendeu !== "sim" ? " selected" : "") + ">Não</option>" +
+            '<option value="sim"' + (r.vendeu === "sim" ? " selected" : "") + ">Sim</option>" +
+          "</select></td>" +
+          '<td><div class="row-actions"><button type="button" class="danger" data-del="' + r.id + '">Apagar</button></div></td>' +
+        "</tr>"
+      )).join("");
+      updateRanking();
+    }
+
+    function addRow() {
+      rows.unshift(emptyRow());
+      persist();
+      render();
+    }
+
+    tbody.addEventListener("input", (e) => {
+      const el = e.target;
+      const tr = el.closest("tr");
+      if (!tr) return;
+      const id = tr.getAttribute("data-id");
+      const field = el.getAttribute("data-field");
+      const row = rows.find((r) => r.id === id);
+      if (!row || !field) return;
+      if (field === "quero" || field === "saves" || field === "shares") {
+        row[field] = num(el.value);
+      } else {
+        row[field] = el.value;
+      }
+      persist();
+      if (field === "tipo" || field === "quero" || field === "saves" || field === "shares" || field === "vendeu") {
+        updateRanking();
+      }
+    });
+
+    tbody.addEventListener("change", (e) => {
+      const el = e.target;
+      if (el.getAttribute("data-field") === "vendeu") {
+        const tr = el.closest("tr");
+        const row = rows.find((r) => r.id === tr.getAttribute("data-id"));
+        if (row) {
+          row.vendeu = el.value;
+          persist();
+          updateRanking();
+        }
+      }
+    });
+
+    tbody.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-del]");
+      if (!btn) return;
+      const id = btn.getAttribute("data-del");
+      if (!confirm("Apagar esta linha?")) return;
+      rows = rows.filter((r) => r.id !== id);
+      persist();
+      render();
+    });
+
+    function exportJson() {
+      const blob = new Blob([JSON.stringify({ v: 1, savedAt: new Date().toISOString(), rows }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "lm-moda-reels-backup.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      savedMsg.textContent = "JSON baixado";
+    }
+
+    function exportCsv() {
+      const header = ["data", "peca", "tipo", "quero", "saves", "shares", "vendeu"];
+      const lines = [header.join(";")];
+      rows.forEach((r) => {
+        lines.push([
+          r.data || "",
+          csvEscape(r.peca || ""),
+          csvEscape(r.tipo || ""),
+          num(r.quero),
+          num(r.saves),
+          num(r.shares),
+          r.vendeu === "sim" ? "sim" : "nao"
+        ].join(";"));
+      });
+      const blob = new Blob(["\uFEFF" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "lm-moda-reels.csv";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      savedMsg.textContent = "CSV baixado";
+    }
+
+    function csvEscape(s) {
+      const t = String(s).replace(/"/g, '""');
+      return /[;"\n]/.test(t) ? '"' + t + '"' : t;
+    }
+
+    document.getElementById("btnAdd").addEventListener("click", addRow);
+    document.getElementById("btnAdd2").addEventListener("click", addRow);
+    document.getElementById("btnExportJson").addEventListener("click", exportJson);
+    document.getElementById("btnExportJson2").addEventListener("click", exportJson);
+    document.getElementById("btnExportCsv").addEventListener("click", exportCsv);
+    document.getElementById("btnExportCsv2").addEventListener("click", exportCsv);
+
+    document.getElementById("btnImport").addEventListener("click", () => document.getElementById("fileImport").click());
+    document.getElementById("fileImport").addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          const incoming = Array.isArray(data) ? data : data.rows;
+          if (!Array.isArray(incoming)) throw new Error("formato");
+          rows = incoming.map((r) => ({
+            id: r.id || uid(),
+            data: r.data || "",
+            peca: r.peca || "",
+            tipo: r.tipo || "",
+            quero: num(r.quero),
+            saves: num(r.saves),
+            shares: num(r.shares),
+            vendeu: r.vendeu === "sim" ? "sim" : "nao"
+          }));
+          persist();
+          render();
+          savedMsg.textContent = "Backup importado";
+        } catch {
+          alert("Arquivo inválido. Use o JSON exportado por esta planilha.");
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      if (!confirm("Zerar toda a planilha deste aparelho?")) return;
+      rows = [];
+      localStorage.removeItem(STORAGE_KEY);
+      render();
+      savedMsg.textContent = "Planilha zerada";
+    });
+
+    if (!rows.length) {
+      savedMsg.textContent = "Pronto para o primeiro Reel";
+    } else {
+      savedMsg.textContent = "Dados restaurados deste aparelho";
+    }
+    render();
+  </script>
+</body>
+</html>
